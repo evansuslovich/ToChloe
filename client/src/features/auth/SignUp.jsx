@@ -28,10 +28,8 @@ export default function SignUp() {
     firstName: '',
     lastName: '',
     username: '',
-    email: '',
     password1: '',
     password2: '',
-    reason: '',
   });
 
   const handleChange = ({ target: { name, value } }) => (
@@ -94,18 +92,6 @@ export default function SignUp() {
                 />
               </Grid>
 
-              {/* Email */}
-              <Grid item xs={12}>
-                <TextField
-                  required
-                  fullWidth
-                  label="Email Address"
-                  name="email"
-                  type="email"
-                  autoComplete="email"
-                  onChange={handleChange}
-                />
-              </Grid>
 
               {/* Username */}
               <Grid item xs={12}>
@@ -145,18 +131,7 @@ export default function SignUp() {
                   onChange={handleChange}
                 />
               </Grid>
-              <Grid item xs={12}>
-                <TextField
-                  required
-                  fullWidth
-                  multiline
-                  name="reason"
-                  rows={4}
-                  label="Tell us a little about why you want to use our project!"
-                  type="text"
-                  onChange={handleChange}
-                />
-              </Grid>
+
             </Grid>
             <Button
               fullWidth
@@ -167,10 +142,12 @@ export default function SignUp() {
                 try {
                   const user = await register(formState).unwrap();
                   dispatch(setUser(user));
+                  console.log(user)
                   localStorage.setItem('token', user.token)
                   navigate("/")
                   enqueueSnackbar('You are now signed in', { variant: 'success' });
                 } catch (err) {
+                  console.log(err)
                   const errorMsg = `Failed - ${err.data.message}`;
                   enqueueSnackbar(errorMsg, { variant: 'error' });
                 }
@@ -198,5 +175,3 @@ export default function SignUp() {
     </div >
   );
 };
-
-

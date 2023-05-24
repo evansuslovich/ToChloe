@@ -9,10 +9,10 @@ import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button'
 import Container from "@mui/material/Container";
-import Typography  from "@mui/material/Typography";
+import Typography from "@mui/material/Typography";
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import CssBaseline from '@mui/material/CssBaseline';
-import Avatar  from "@mui/material/Avatar";
+import Avatar from "@mui/material/Avatar";
 
 export default function SignIn() {
 
@@ -61,10 +61,10 @@ export default function SignIn() {
               margin="normal"
               required
               fullWidth
-              id="email"
-              label="Email"
-              name="email"
-              autoComplete="Email"
+              id="username"
+              label="Username"
+              name="username"
+              autoComplete="Username"
               autoFocus
               onChange={handleChange}
             />
@@ -99,8 +99,8 @@ export default function SignIn() {
             >
               Login
             </Button>
-            </Box>
           </Box>
+        </Box>
       </Container>
     </div >
   )
