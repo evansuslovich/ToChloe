@@ -142,7 +142,6 @@ export default function SignUp() {
                 try {
                   const user = await register(formState).unwrap();
                   dispatch(setUser(user));
-                  console.log(user)
                   localStorage.setItem('token', user.token)
                   navigate("/")
                   enqueueSnackbar('You are now signed in', { variant: 'success' });
