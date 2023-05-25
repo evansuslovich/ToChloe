@@ -1,12 +1,14 @@
 import React, { useState } from "react"
-import { useCreateLetterMutation } from "../../app/services/api/lettersApi";
+import { useCreateLetterMutation } from "../../app/services/api/letterApi";
 import { useSnackbar } from 'notistack'
+import Button from '@mui/material/Button';
+import TextField from '@mui/material/TextField';
 
 export default function WriteLetter() {
 
   const [letter, setLetter] = useState("");
-  const [createLetter, { isLoading }] = useCreateLetterMutation();
   const { enqueueSnackbar } = useSnackbar()
+  const [createLetter, { isLoading }] = useCreateLetterMutation()
 
   const handleChange = (event) => {
     const name = event.target.name;
@@ -35,7 +37,6 @@ export default function WriteLetter() {
         sx={{ mt: 3, mb: 2 }}
         disabled={isLoading}
         onClick={async () => {
-
           try {
             const sentLetter = await createLetter(letter).unwrap();
             enqueueSnackbar('Letter Created', { variant: 'success' });
