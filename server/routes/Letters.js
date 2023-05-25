@@ -15,13 +15,12 @@ router.post("/createLetter", async (req, res) => {
     const { letter } = req.body
 
     // create letter
-    await Letters.create({
+    const createdLetter = await Letters.create({
       letter: letter
     })
 
-    return res.status(200).send("Letter Sent!")
+    return res.status(200).json(createdLetter)
   } catch (err) {
-    console.log(err)
   }
 
 
