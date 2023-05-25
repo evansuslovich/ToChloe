@@ -13,10 +13,10 @@ const db = require("./models")
 
 // Routers 
 const userRouter = require('./routes/Users');
-app.use("/users", userRouter)
+app.use("/api/users", userRouter)
 
 const lettersRouter = require('./routes/Letters');
-app.use("/letters", lettersRouter)
+app.use("/api/letters", lettersRouter)
 
 
 db.sequelize.sync().then(() => {
