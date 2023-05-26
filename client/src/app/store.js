@@ -3,7 +3,6 @@ import { configureStore } from '@reduxjs/toolkit'
 import { setupListeners } from '@reduxjs/toolkit/query'
 
 import { lettersApi } from './services/api/letterApi';
-import lettersReducer from './services/slices/letterSlice'
 
 import authReducer from './services/slices/authSlice'
 import { authApi } from './services/api/authApi';
