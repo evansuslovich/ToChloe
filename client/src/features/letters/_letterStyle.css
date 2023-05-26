@@ -1,0 +1,37 @@
+.letter {
+  justify-content: center; /* Horizontal centering */
+  align-items: center; /* Vertical centering */
+  justify-items: center;
+}
+
+.paper {
+  background-color: #E0D3Af;
+  width: 50%;
+  height: 70%;
+  padding: 30px;
+}
+
+.paper-input {
+  background-color: transparent;
+  height: 80vh;
+  width: 100%;
+  border: none;
+  outline: none;
+  resize: none;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 16px;
+  line-height: 1.4em;
+  overflow: hidden;
+}
+
+.non-editable-text-area {
+  background-color: white;
+  width: 50%;
+  height: 70%;
+  padding: 30px;
+  border: none;
+  outline: none;
+  pointer-events: none; /* Disable pointer events */
+  height: 20px; /* Set the desired height for spacing */
+  resize: none; /* Prevent resizing */
+}
