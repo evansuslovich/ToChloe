@@ -35,7 +35,6 @@ module.exports = (sequelize, DataTypes) => {
       friendId: { type: DataTypes.Schema.Types.ObjectId, ref: 'User' },
       friendName: { type: String, default: '' }
     }],
-    totalRequest: { type: Number, default: 0 }
   });
 
   return Users;
