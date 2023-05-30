@@ -23,18 +23,19 @@ module.exports = (sequelize, DataTypes) => {
     },
     userImage: {
       type: DataTypes.STRING,
-      allowNull: true
-    }, sentRequest: [{
-      username: { type: String, default: '' }
-    }],
-    request: [{
-      userId: { type: DataTypes.Schema.Types.ObjectId, ref: 'User' },
-      username: { type: String, default: '' }
-    }],
-    friendsList: [{
-      friendId: { type: DataTypes.Schema.Types.ObjectId, ref: 'User' },
-      friendName: { type: String, default: '' }
-    }],
+      allowNull: true,
+      defaultValue: ""
+    },
+    sentRequestsList: {
+      type: DataTypes.ARRAY(DataTypes.STRING),
+      allowNull: true,
+      defaultValue: []
+    },
+    friendsList: {
+      type: DataTypes.ARRAY(DataTypes.STRING, DataTypes.STRING),
+      allowNull: true,
+      defaultValue: []
+    },
   });
 
   return Users;
