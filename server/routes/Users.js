@@ -105,7 +105,6 @@ router.post("/login", async (req, res) => {
 
 const invalidateTokens = []
 
-
 router.get("/profile", auth, async (req, res) => {
   const token = req.headers['x-access-token'];
 
@@ -122,7 +121,6 @@ router.get("/profile", auth, async (req, res) => {
   }
 
 });
-
 
 
 // Define route to handle logout
@@ -157,6 +155,33 @@ router.post("/logout", auth, (req, res) => {
     console.log(err)
   }
 });
+
+router.post("/send-friend-request", async (req, res) => {
+
+  const { userSendingRequestUsername, userReceivingFriendRequestUsername } = req.body
+
+  const userSendingFriendRequest = await Users.findOne({ where: ({ username: userSendingRequestUsername }) });
+
+  const userReceivingFriendRequest = await Users.findOne({ where: ({ username: userReceivingFriendRequestUsername }) });
+
+  if (userReceivingFriendRequest == null || userSendingFriendRequest == null) {
+    return res.status(403).send("The user receiving the friend request or the user sending the friend request does not exist")
+  }
+  const array = userSendingFriendRequest.sentRequestsList
+
+  for (let i = 0; i < userSendingFriendRequest.sentRequestsList.length; i++) {
+    array.push(userSendingFriendRequest.sentRequestsList[i])
+  }
+
+  array.push(userReceivingFriendRequestUsername)
+
+
+  userSendingFriendRequest.sentRequestsList = array
+
+  await userSendingFriendRequest.save()
+
+  return res.status(200).json(userSendingFriendRequest)
+})
 
 
 
