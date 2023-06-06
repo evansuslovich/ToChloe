@@ -19,8 +19,23 @@ module.exports = (sequelize, DataTypes) => {
     },
     token: {
       type: DataTypes.STRING,
-      allowNull: true 
-    }
+      allowNull: true
+    },
+    userImage: {
+      type: DataTypes.STRING,
+      allowNull: true,
+      defaultValue: ""
+    },
+    sentRequestsList: {
+      type: DataTypes.ARRAY(DataTypes.STRING),
+      allowNull: true,
+      defaultValue: []
+    },
+    friendsList: {
+      type: DataTypes.ARRAY(DataTypes.STRING, DataTypes.STRING),
+      allowNull: true,
+      defaultValue: []
+    },
   });
 
   return Users;

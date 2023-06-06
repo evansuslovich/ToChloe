@@ -15,8 +15,6 @@ router.post("/register", async (req, res) => {
     // Get user input
     const { firstName, lastName, username, password1, password2 } = req.body;
 
-    console.log(req.body)
-
     if (!(firstName && lastName && username && password1 && password2)) {
       return res.status(400).send("Input Empty");
     }
@@ -105,7 +103,6 @@ router.post("/login", async (req, res) => {
 
 const invalidateTokens = []
 
-
 router.get("/profile", auth, async (req, res) => {
   const token = req.headers['x-access-token'];
 
@@ -122,7 +119,6 @@ router.get("/profile", auth, async (req, res) => {
   }
 
 });
-
 
 
 // Define route to handle logout
@@ -157,6 +153,113 @@ router.post("/logout", auth, (req, res) => {
     console.log(err)
   }
 });
+
+router.post("/send-friend-request", async (req, res) => {
+
+  const { userSendingFriendRequestUsername, userReceivingFriendRequestUsername } = req.body
+
+  const userSendingFriendRequest = await Users.findOne({ where: ({ username: userSendingFriendRequestUsername }) });
+
+  const userReceivingFriendRequest = await Users.findOne({ where: ({ username: userReceivingFriendRequestUsername }) });
+
+  if (userReceivingFriendRequest == null || userSendingFriendRequest == null) {
+    return res.status(403).send("The user receiving the friend request or the user sending the friend request does not exist")
+  }
+
+  if (userSendingFriendRequestUsername === userReceivingFriendRequestUsername) {
+    return res.status(403).send("You can't request yourself")
+  }
+
+  // really weird solution .. this will be revised after proof-of-concept
+  const array = []
+
+  for (let i = 0; i < userSendingFriendRequest.sentRequestsList.length; i++) {
+    array.push(userSendingFriendRequest.sentRequestsList[i])
+  }
+
+  array.push(userReceivingFriendRequestUsername)
+
+  userSendingFriendRequest.sentRequestsList = array
+
+  await userSendingFriendRequest.save()
+
+  return res.status(200).json(userSendingFriendRequest)
+})
+
+router.post("/accept-friend-request", async (req, res) => {
+  const { userReceivingFriendRequestUsername, userSendingFriendRequestUsername } = req.body
+
+  const userSendingFriendRequest = await Users.findOne({ where: ({ username: userSendingFriendRequestUsername }) });
+
+  const userReceivingFriendRequest = await Users.findOne({ where: ({ username: userReceivingFriendRequestUsername }) });
+
+  if (userReceivingFriendRequest == null || userSendingFriendRequest == null) {
+    return res.status(403).send("The user receiving the friend request or the user sending the friend request does not exist")
+  }
+
+  const senderFriendsList = []
+  const receivedFriendsList = []
+  const senderFriendRequests = []
+
+  // saving friend for the user who sent the friend request
+  for (let i = 0; i < userSendingFriendRequest.friendsList.length; i++) {
+    senderFriendsList.push(userSendingFriendRequest.friendList[i])
+  }
+  // add user who is receiving the friend request
+  senderFriendsList.push(userReceivingFriendRequestUsername)
+  userSendingFriendRequest.friendsList = senderFriendsList
+  await userSendingFriendRequest.save()
+
+
+  // saving friend for the user who receieved the friend request
+  for (let i = 0; i < userReceivingFriendRequest.friendsList.length; i++) {
+    receivedFriendsList.push(userReceivingFriendRequest.friendList[i])
+  }
+  receivedFriendsList.push(userSendingFriendRequestUsername)
+
+  // add user who is accepting the friend request
+  userReceivingFriendRequest.friendsList = receivedFriendsList
+  await userReceivingFriendRequest.save()
+
+  // remove friend request because both users are already friends 
+  // you can't request someone who you're already friends with
+
+  index = 0
+
+  for (let i = 0; i < userSendingFriendRequest.sentRequestsList.length; i++) {
+    senderFriendRequests.push(userSendingFriendRequest.sentRequestsList[i])
+    // if the user who recieved the friend request, accepts, we are going to remove their username from the senders sent request list
+    if (userSendingFriendRequest.sentRequestsList[i] === userReceivingFriendRequestUsername) {
+      index = i
+    }
+  }
+
+  // // remove friend request
+  senderFriendRequests.splice(index, 1)
+
+  userSendingFriendRequest.sentRequestsList = senderFriendRequests
+
+  await userSendingFriendRequest.save()
+
+  return res.status(200).json(userSendingFriendRequest)
+
+})
+
+
+router.post("/search-for-user", async (req, res) => {
+
+  const { usernameQuery } = req.body
+
+  const users = await Users.findAll();
+
+  const resultOfSearch = []
+  for (let i = 0; i < users.length; i++) {
+    if (users[i].firstName.includes(usernameQuery)) {
+      resultOfSearch.push(users[i])
+    }
+  }
+  return res.status(200).json(resultOfSearch)
+})
 
 
 
