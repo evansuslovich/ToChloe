@@ -20,7 +20,13 @@ export default function Header() {
 
   return (
     <div>
-      {auth &&
+
+    </div>
+  )
+}
+
+/*
+{auth &&
         <div>
           <Link to="/account"> Account </Link>
 
@@ -48,6 +54,4 @@ export default function Header() {
           <Intro />
         </div>
       }
-    </div>
-  )
-}
+*/
