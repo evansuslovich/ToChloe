@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 import { useSnackbar } from 'notistack';
 import Intro from "../features/homepage/Intro"
 import WriteLetter from "../features/letters/WriteLetter";
+import Search from "../features/social/search/Search";
 
 export default function Header() {
 
@@ -22,6 +23,8 @@ export default function Header() {
       {auth &&
         <div>
           <Link to="/account"> Account </Link>
+
+          <Search />
 
           <br />
 
