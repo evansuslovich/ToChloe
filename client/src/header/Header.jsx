@@ -20,13 +20,7 @@ export default function Header() {
 
   return (
     <div>
-
-    </div>
-  )
-}
-
-/*
-{auth &&
+      {auth &&
         <div>
           <Link to="/account"> Account </Link>
 
@@ -34,6 +28,11 @@ export default function Header() {
 
           <br />
 
+
+          <h1 className="text-3xl font-bold underline">
+            Hello world!
+          </h1>
+          
           <Link onClick={async () => {
             await logout().unwrap();
             dispatch(setUser(null));
@@ -54,4 +53,6 @@ export default function Header() {
           <Intro />
         </div>
       }
-*/
+    </div>
+  )
+}
