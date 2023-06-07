@@ -7,7 +7,7 @@ export default function Account() {
   const user = useSelector(selectCurrentUser)
 
   return (
-    <div>
+    <div className="account">
       <h1>Account</h1>
       <h1>First Name: {user.firstName}</h1>
       <h1>Last Name: {user.lastName}</h1>
