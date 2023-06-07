@@ -101,6 +101,27 @@ router.post("/login", async (req, res) => {
   }
 });
 
+router.get("/getUser", async (req, res) => {
+
+  const {username, searchedUser} = req.query
+
+
+  const user = await Users.findOne({ where: ({ username: username }) })
+
+  const searchedForUser = await Users.findOne({ where: ({ username: searchedUser }) })
+
+
+  console.log(user.friendsList.includes(searchedForUser.username))
+  console.log(searchedForUser.friendsList.includes(user.user))
+
+  // if (user === undefined) {
+  //   return res.status(403).send("User does not exist");
+  // }
+
+  return res.status(200)
+
+});
+
 const invalidateTokens = []
 
 router.get("/profile", auth, async (req, res) => {
@@ -248,13 +269,15 @@ router.post("/accept-friend-request", async (req, res) => {
 
 router.post("/search-for-user", async (req, res) => {
 
-  const { usernameQuery } = req.body
+  const { query, username } = req.body
 
   const users = await Users.findAll();
 
   const resultOfSearch = []
+
   for (let i = 0; i < users.length; i++) {
-    if (users[i].firstName.includes(usernameQuery)) {
+    // if the query is included in a username also can't search for yourself
+    if (users[i].username.includes(query.query) && users[i].username !== username) {
       resultOfSearch.push(users[i])
     }
   }
