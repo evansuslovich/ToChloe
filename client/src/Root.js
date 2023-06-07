@@ -4,7 +4,8 @@ import { Provider } from 'react-redux';
 import getStore from './app/store';
 import App from './App'
 import { SnackbarProvider } from "notistack";
-
+// Import our style sheet
+import './style/Application.scss'
 
 import { BrowserRouter } from 'react-router-dom';
 

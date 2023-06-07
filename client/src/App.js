@@ -9,14 +9,15 @@ import Homepage from "./features/homepage/Homepage"
 import SignIn from "./features/auth/SignIn";
 import SignUp from "./features/auth/SignUp";
 import Account from "./features/auth/Account";
+import User from "./features/social/User";
 
 function App() {
 
   return (
     <div className="app">
-
       <Routes>
         <Route index element={<Homepage />} />
+        <Route path="/account/:username" element={(<User />)} />
         <Route path="/sign-in" element={<SignIn />} />
         <Route path="/sign-up" element={<SignUp />} />
         <Route path="/account" element={<Account />} />
