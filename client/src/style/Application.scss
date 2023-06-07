@@ -1,2 +1,7 @@
+// tailwind imports
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 // account styling
 @import '../features//auth/style/_account.scss'

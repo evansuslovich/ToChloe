@@ -1,15 +1,15 @@
-import React from 'react';
 import { createRoot } from 'react-dom/client';
 import { Provider } from 'react-redux';
 import getStore from './app/store';
 import App from './App'
 import { SnackbarProvider } from "notistack";
-// Import our style sheet
-// import './style/Application.scss'
-
-import './Root.css'
-
 import { BrowserRouter } from 'react-router-dom';
+
+
+// using tailwind and sass
+import './style/Application.scss'
+// import './style/Root.css'
+
 
 
 function Root() {
