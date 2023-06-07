@@ -5,7 +5,9 @@ import getStore from './app/store';
 import App from './App'
 import { SnackbarProvider } from "notistack";
 // Import our style sheet
-import './style/Application.scss'
+// import './style/Application.scss'
+
+import './Root.css'
 
 import { BrowserRouter } from 'react-router-dom';
 
