@@ -103,22 +103,26 @@ router.post("/login", async (req, res) => {
 
 router.get("/getUser", async (req, res) => {
 
-  const {username, searchedUser} = req.query
+  const { username, searchedUser, error } = req.query
 
 
   const user = await Users.findOne({ where: ({ username: username }) })
 
   const searchedForUser = await Users.findOne({ where: ({ username: searchedUser }) })
 
+  if (user === undefined || searchedForUser === undefined) {
+    return res.status(403).send("User or user searched for does not exist");
+  }
 
-  console.log(user.friendsList.includes(searchedForUser.username))
-  console.log(searchedForUser.friendsList.includes(user.user))
+  if (
+    user.friendsList.includes(searchedForUser.username) &&
+    searchedForUser.friendsList.includes(user.username)) {
+    return res.status(200).json(searchedForUser)
+  } else {
+    return res.status(403).send("Users are not friends with eachother")
+  }
 
-  // if (user === undefined) {
-  //   return res.status(403).send("User does not exist");
-  // }
 
-  return res.status(200)
 
 });
 
