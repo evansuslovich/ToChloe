@@ -3,11 +3,11 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
 export const authApi = createApi({
   reducerPath: 'authApi',
-  baseQuery: fetchBaseQuery({ 
+  baseQuery: fetchBaseQuery({
     baseUrl: 'http://localhost:3001/api/users/',
     prepareHeaders: (headers,) => {
       headers.set('x-access-token', localStorage.getItem('token'));
-      return headers 
+      return headers
     },
   }),
   endpoints: (builder) => ({
@@ -38,14 +38,29 @@ export const authApi = createApi({
         method: 'GET'
       })
     }),
+    search: builder.mutation({
+      query: (credentials) => ({
+        url: 'search-for-user',
+        method: 'POST',
+        body: { ...credentials },
+
+      })
+    }),
+    getUser: builder.query({
+      query: ({ username, searchedUser }) => ({
+        url: `getUser/?username=${username}&searchedUser=${searchedUser}`,
+        method: 'GET'
+      })
+    }),
   }),
 });
 
 export const {
   useGetAllUsersQuery,
   useLogoutMutation,
-  useLoginMutation, 
+  useLoginMutation,
   useRegisterMutation,
   useProfileQuery,
-
+  useSearchMutation,
+  useGetUserQuery,
 } = authApi;
