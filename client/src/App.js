@@ -9,7 +9,7 @@ import Homepage from "./features/homepage/Homepage"
 import SignIn from "./features/auth/SignIn";
 import SignUp from "./features/auth/SignUp";
 import Account from "./features/auth/Account";
-import User from "./features/social/search/User";
+import User from "./features/social/User";
 
 function App() {
 
