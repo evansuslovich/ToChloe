@@ -13,9 +13,7 @@ export default function SearchedUsers(listOfUsers) {
         </li>
       </ul >
     ))
-
     setUsers(usersInformation)
-
   }, [listOfUsers])
 
   return (
