@@ -14,6 +14,7 @@ router.post("/createLetter", async (req, res) => {
   let fromUser;
   let toUser;
 
+  // if the length of the letter is 0 (empty) 
   if (letter.length === 0) {
     return res.status(403).json({ "message": "The letter is empty!" })
   }
@@ -32,8 +33,8 @@ router.post("/createLetter", async (req, res) => {
     return res.status(403).json({ "message": "The user receiving this letter does not exist" })
   }
 
+  // create the letter
   try {
-    // create the letter
     const createdLetter = await Letters.create({ letter: letter, fromUserId: fromUserId, toUserId: toUserId })
     return res.status(200).json(createdLetter)
   } catch (error) {
