@@ -7,5 +7,20 @@ module.exports = (sequelize, DataTypes) => {
     },
   });
 
+  Letters.associate = (models) => {
+    Letters.belongsTo(models.Users, {
+      as: 'fromUser',
+      foreignKey: {
+        allowNull: false
+      }
+    });
+    Letters.belongsTo(models.Users, {
+      as: 'toUser',
+      foreignKey: {
+        allowNull: false
+      }
+    });
+  };
+
   return Letters;
-};  
+};
