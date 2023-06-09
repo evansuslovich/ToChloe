@@ -28,11 +28,6 @@ export default function Header() {
 
           <br />
 
-
-          <h1 className="text-3xl font-bold underline">
-            Hello world!
-          </h1>
-          
           <Link onClick={async () => {
             await logout().unwrap();
             dispatch(setUser(null));

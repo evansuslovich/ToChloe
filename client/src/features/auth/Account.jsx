@@ -1,4 +1,3 @@
-import React from "react"
 import { useSelector } from "react-redux"
 import { selectCurrentUser } from "../../app/services/slices/authSlice"
 
@@ -7,7 +6,7 @@ export default function Account() {
   const user = useSelector(selectCurrentUser)
 
   return (
-    <div className="account">
+    <div>
       <h1>Account</h1>
       <h1>First Name: {user.firstName}</h1>
       <h1>Last Name: {user.lastName}</h1>

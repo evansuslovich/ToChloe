@@ -1,18 +1,21 @@
-import React, { useEffect, useState } from "react"
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useGetUserQuery } from "../../app/services/api/authApi";
 import { useSelector } from "react-redux";
 import { selectCurrentUser } from "../../app/services/slices/authSlice";
-
+import Friend from "./Friend";
 
 export default function User() {
   const params = useParams();
+  const navigate = useNavigate()
   const { username } = params;
   const user = useSelector(selectCurrentUser)
 
   const { data, isLoading, error } = useGetUserQuery({ "username": user.username, "searchedUser": username, })
 
   const userData = data
+
+  console.log(error)
+
 
   return (
     <div>
@@ -23,18 +26,18 @@ export default function User() {
           </div>
 
           {!isLoading && (
-            <div>
-              <h1>{userData.username}</h1>
-              <h1>Connected to: {userData.friendsList.length}</h1>
-            </div>
+            <Friend friendData={userData} />
           )}
         </div>
       )}
 
       {error && (
-        <h1>User is private</h1>
+        <h1>{error.data.message}</h1>
       )}
 
+      {error && error.data.message === "Users are the same!" && (
+        navigate("/account")
+      )}
     </div>
   )
 }

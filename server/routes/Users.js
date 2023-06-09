@@ -101,30 +101,41 @@ router.post("/login", async (req, res) => {
   }
 });
 
+
 router.get("/getUser", async (req, res) => {
+  const { username, searchedUser } = req.query
 
-  const { username, searchedUser, error } = req.query
+  let user;
+  let searchedForUser;
 
+  try {
+    // get users
+    user = await Users.findOne({ where: ({ username: username }) })
+    searchedForUser = await Users.findOne({ where: ({ username: searchedUser }) })
 
-  const user = await Users.findOne({ where: ({ username: username }) })
+    // undefined parameters or users not found
+    if (user === undefined || searchedForUser === undefined) {
+      return res.status(403).json({ message: "User does not exist" });
+    }
 
-  const searchedForUser = await Users.findOne({ where: ({ username: searchedUser }) })
+    // users are same 
+    if (user.username === searchedForUser.username) {
+      return res.status(403).json({ message: "Users are the same" });
+    }
 
-  if (user === undefined || searchedForUser === undefined) {
-    return res.status(403).send("User or user searched for does not exist");
+    // users are frieds
+    if (
+      user.friendsList.includes(searchedForUser.username) &&
+      searchedForUser.friendsList.includes(user.username)) {
+      return res.status(200).json({ message: "User is friend", user: searchedForUser });
+    } else {
+      return res.status(403).json({ message: "User is private" });
+    }
+  } catch (err) {
+    return res.status(403).json({ message: "User does not exist" })
   }
+})
 
-  if (
-    user.friendsList.includes(searchedForUser.username) &&
-    searchedForUser.friendsList.includes(user.username)) {
-    return res.status(200).json(searchedForUser)
-  } else {
-    return res.status(403).send("Users are not friends with eachother")
-  }
-
-
-
-});
 
 const invalidateTokens = []
 
@@ -269,7 +280,6 @@ router.post("/accept-friend-request", async (req, res) => {
   return res.status(200).json(userSendingFriendRequest)
 
 })
-
 
 router.post("/search-for-user", async (req, res) => {
 
