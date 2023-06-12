@@ -149,6 +149,91 @@ router.post("/logout", auth, (req, res) => {
   }
 });
 
+router.get("/getUser", async (req, res) => {
+  const { username, searchedUser } = req.query
+
+  let user;
+  let searchedForUser;
+
+  try {
+    // get users
+    user = await Users.findOne({ where: ({ username: username }) })
+    searchedForUser = await Users.findOne({ where: ({ username: searchedUser }) })
+
+    // undefined parameters or users not found
+    if (user === undefined || searchedForUser === undefined) {
+      return res.status(404).json({ message: "User does not exist" });
+    }
+
+    // users are same 
+    if (user.username === searchedForUser.username) {
+      return res.status(404).json({
+        "message": "Searched user is the same as the active user"
+      });
+    }
+    if (user.friendsList.includes(searchedForUser.username)) {
+      return res.status(200).json({ message: "Users are friends", user: searchedForUser });
+    } else if (user.sentRequestsList.includes(searchedForUser.username)) {
+      return res.status(404).json({ message: "Pending request", user: searchedForUser });
+    } else if (user.receivedRequestsList.includes(searchedForUser.username)) {
+      return res.status(404).json({ message: "Accept request", user: searchedForUser })
+    } else
+      return res.status(404).json({ message: "User is private", user: searchedForUser });
+  } catch (err) {
+    console.error(err)
+    // this typically occurs if a person types in url like: locahost:3000/account/random
+    // if 'random' isn't a user then it'll catch an error. 
+    return res.status(404).json({ message: "User does not exist" });
+  }
+});
+
+router.post("/search-for-user", async (req, res) => {
+
+  const { query, username } = req.body
+
+  const users = await Users.findAll();
+
+  const resultOfSearch = []
+
+  for (let i = 0; i < users.length; i++) {
+    // if the query is included in a username also can't search for yourself
+    if (users[i].username.includes(query.query) && users[i].username !== username) {
+      resultOfSearch.push(users[i])
+    }
+  }
+  return res.status(200).json(resultOfSearch)
+})
+
+router.get("/sentRequests", async (req, res) => {
+
+  const { userId } = req.query
+  const user = await Users.findOne({ where: ({ id: userId }) });
+  if (!user || user === null) {
+    return res.status(403).json({ "message": "User does not exist" })
+  }
+  try {
+    return res.status(200).json({ "sentRequests": user.sentRequestsList })
+  } catch (error) {
+    return res.status(500).json({ message: error });
+  }
+})
+
+router.get("/receivedRequests", async (req, res) => {
+
+  const { userId } = req.query
+
+  const user = await Users.findOne({ where: ({ id: userId }) });
+
+  if (!user || user === null) {
+    return res.status(403).json({ "message": "User does not exist" })
+  }
+  try {
+    return res.status(200).json({ "receivedRequests": user.receivedRequests })
+  } catch (error) {
+    return res.status(500).json({ message: error });
+  }
+})
+
 router.post("/send-friend-request", async (req, res) => {
   try {
     const { userSendingFriendRequestUsername, userReceivingFriendRequestUsername } = req.body
@@ -182,72 +267,6 @@ router.post("/send-friend-request", async (req, res) => {
     return res.status(500).json({ message: error });
   }
 });
-
-
-router.get("/getUser", async (req, res) => {
-  const { username, searchedUser } = req.query
-
-  let user;
-  let searchedForUser;
-
-  try {
-    // get users
-    user = await Users.findOne({ where: ({ username: username }) })
-    searchedForUser = await Users.findOne({ where: ({ username: searchedUser }) })
-
-    // undefined parameters or users not found
-    if (user === undefined || searchedForUser === undefined) {
-      return res.status(404).json({ message: "User does not exist" });
-    }
-
-    // users are same 
-    if (user.username === searchedForUser.username) {
-      return res.status(404).json({
-        "message": "Searched user is the same as the active user"
-      });
-    }
-
-    if (user.friendsList.includes(searchedForUser.username)) {
-      return res.status(200).json({ message: "Users are friends", user: searchedForUser });
-    } else if (user.sentRequestsList.includes(searchedForUser.username)) {
-      return res.status(404).json({ message: "Pending request", user: searchedForUser });
-    } else {
-      return res.status(404).json({ message: "User is private" });
-    }
-  } catch (err) {
-    return res.status(404).json({ message: "User does not exist" });
-  }
-});
-
-router.get("/sentRequests", async (req, res) => {
-
-  const { userId } = req.query
-  const user = await Users.findOne({ where: ({ id: userId }) });
-  if (!user || user === null) {
-    return res.status(403).json({ "message": "User does not exist" })
-  }
-  try {
-    return res.status(200).json({ "sentRequests": user.sentRequestsList })
-  } catch (error) {
-    return res.status(500).json({ message: error });
-  }
-})
-
-router.get("/receivedRequests", async (req, res) => {
-
-  const { userId } = req.query
-
-  const user = await Users.findOne({ where: ({ id: userId }) });
-
-  if (!user || user === null) {
-    return res.status(403).json({ "message": "User does not exist" })
-  }
-  try {
-    return res.status(200).json({ "receivedRequests": user.receivedRequests })
-  } catch (error) {
-    return res.status(500).json({ message: error });
-  }
-})
 
 router.post("/accept-friend-request", async (req, res) => {
   const { userReceivingFriendRequestUsername, userSendingFriendRequestUsername } = req.body
@@ -302,24 +321,6 @@ router.post("/accept-friend-request", async (req, res) => {
   } catch (error) {
     return res.status(500).json({ "message": error })
   }
-})
-
-
-router.post("/search-for-user", async (req, res) => {
-
-  const { query, username } = req.body
-
-  const users = await Users.findAll();
-
-  const resultOfSearch = []
-
-  for (let i = 0; i < users.length; i++) {
-    // if the query is included in a username also can't search for yourself
-    if (users[i].username.includes(query.query) && users[i].username !== username) {
-      resultOfSearch.push(users[i])
-    }
-  }
-  return res.status(200).json(resultOfSearch)
 })
 
 
