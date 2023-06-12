@@ -52,6 +52,32 @@ export const authApi = createApi({
         method: 'GET'
       })
     }),
+    getSentRequests: builder.query({
+      query: (userId) => ({
+        url: `sentRequests/?userId=${userId}`,
+        method: 'GET'
+      })
+    }),
+    getReceivedRequests: builder.query({
+      query: (userId) => ({
+        url: `receivedRequests/?userId=${userId}`,
+        method: 'GET'
+      })
+    }),
+    sendFriendRequest: builder.mutation({
+      query: (credentials) => ({
+        url: 'send-friend-request',
+        method: 'POST',
+        body: { ...credentials },
+      })
+    }),
+    acceptFriendRequest: builder.mutation({
+      query: (credentials) => ({
+        url: 'accept-friend-request',
+        method: 'POST',
+        body: { ...credentials },
+      })
+    }),
   }),
 });
 
@@ -63,4 +89,8 @@ export const {
   useProfileQuery,
   useSearchMutation,
   useGetUserQuery,
+  useGetSentRequestsQuery, 
+  useGetReceivedRequestsQuery, 
+  useSendFriendRequestMutation, 
+  useAcceptFriendRequestMutation,
 } = authApi;
