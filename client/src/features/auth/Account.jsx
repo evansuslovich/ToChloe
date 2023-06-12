@@ -1,5 +1,6 @@
 import { useSelector } from "react-redux"
 import { selectCurrentUser } from "../../app/services/slices/authSlice"
+import { NavLink } from "react-router-dom"
 
 export default function Account() {
 
@@ -7,11 +8,15 @@ export default function Account() {
 
   return (
     <div>
-      <h1>Account</h1>
-      <h1>First Name: {user.firstName}</h1>
-      <h1>Last Name: {user.lastName}</h1>
-      <h1>username: {user.username}</h1>
+      <div>
+        <h1>Account</h1>
+        <h1>First Name: {user.firstName}</h1>
+        <h1>Last Name: {user.lastName}</h1>
+        <h1>username: {user.username}</h1>
+        <NavLink to="/account/friends">Friends: {user.friendsList.length}</NavLink>
+        <br />
+        <NavLink to="/account/acceptRequests">Accept Friend Requests</NavLink>
+      </div>
     </div>
-
   )
 }

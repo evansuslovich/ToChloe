@@ -100,40 +100,6 @@ router.post("/login", async (req, res) => {
   }
 });
 
-router.get("/getUser", async (req, res) => {
-  const { username, searchedUser } = req.query
-
-  let user;
-  let searchedForUser;
-
-  try {
-    // get users
-    user = await Users.findOne({ where: ({ username: username }) })
-    searchedForUser = await Users.findOne({ where: ({ username: searchedUser }) })
-
-    // undefined parameters or users not found
-    if (user === undefined || searchedForUser === undefined) {
-      return res.status(403).json({ message: "User does not exist" });
-    }
-
-    // users are same 
-    if (user.username === searchedForUser.username) {
-      return res.status(403).json({ message: "Users are the same" });
-    }
-
-    // users are frieds
-    if (
-      user.friendsList.includes(searchedForUser.username) &&
-      searchedForUser.friendsList.includes(user.username)) {
-      return res.status(200).json({ message: "Users are friends", user: searchedForUser });
-    } else {
-      return res.status(403).json({ message: "User is private" });
-    }
-  } catch (err) {
-    return res.status(403).json({ message: "User does not exist" })
-  }
-})
-
 router.get("/profile", auth, async (req, res) => {
   const token = req.headers['x-access-token'];
 
@@ -183,6 +149,91 @@ router.post("/logout", auth, (req, res) => {
   }
 });
 
+router.get("/getUser", async (req, res) => {
+  const { username, searchedUser } = req.query
+
+  let user;
+  let searchedForUser;
+
+  try {
+    // get users
+    user = await Users.findOne({ where: ({ username: username }) })
+    searchedForUser = await Users.findOne({ where: ({ username: searchedUser }) })
+
+    // undefined parameters or users not found
+    if (user === undefined || searchedForUser === undefined) {
+      return res.status(404).json({ message: "User does not exist" });
+    }
+
+    // users are same 
+    if (user.username === searchedForUser.username) {
+      return res.status(404).json({
+        "message": "Searched user is the same as the active user"
+      });
+    }
+    if (user.friendsList.includes(searchedForUser.username)) {
+      return res.status(200).json({ message: "Users are friends", user: searchedForUser });
+    } else if (user.sentRequestsList.includes(searchedForUser.username)) {
+      return res.status(404).json({ message: "Pending request", user: searchedForUser });
+    } else if (user.receivedRequestsList.includes(searchedForUser.username)) {
+      return res.status(404).json({ message: "Accept request", user: searchedForUser })
+    } else
+      return res.status(404).json({ message: "User is private", user: searchedForUser });
+  } catch (err) {
+    console.error(err)
+    // this typically occurs if a person types in url like: locahost:3000/account/random
+    // if 'random' isn't a user then it'll catch an error. 
+    return res.status(404).json({ message: "User does not exist" });
+  }
+});
+
+router.post("/search-for-user", async (req, res) => {
+
+  const { query, username } = req.body
+
+  const users = await Users.findAll();
+
+  const resultOfSearch = []
+
+  for (let i = 0; i < users.length; i++) {
+    // if the query is included in a username also can't search for yourself
+    if (users[i].username.includes(query.query) && users[i].username !== username) {
+      resultOfSearch.push(users[i])
+    }
+  }
+  return res.status(200).json(resultOfSearch)
+})
+
+router.get("/sentRequests", async (req, res) => {
+
+  const { userId } = req.query
+  const user = await Users.findOne({ where: ({ id: userId }) });
+  if (!user || user === null) {
+    return res.status(403).json({ "message": "User does not exist" })
+  }
+  try {
+    return res.status(200).json({ "sentRequests": user.sentRequestsList })
+  } catch (error) {
+    return res.status(500).json({ message: error });
+  }
+})
+
+router.get("/receivedRequests", async (req, res) => {
+
+  const { userId } = req.query
+
+  const user = await Users.findOne({ where: ({ id: userId }) });
+
+  if (!user || user === null) {
+    return res.status(403).json({ "message": "User does not exist" })
+  }
+  try {
+    return res.status(200).json({ "receivedRequests": user.receivedRequests })
+  } catch (error) {
+    return res.status(500).json({ message: error });
+  }
+})
+
 router.post("/send-friend-request", async (req, res) => {
   try {
     const { userSendingFriendRequestUsername, userReceivingFriendRequestUsername } = req.body
@@ -205,73 +256,71 @@ router.post("/send-friend-request", async (req, res) => {
       })
     }
 
-    userSendingFriendRequest.sentRequestsList = userSendingFriendRequest.sentRequestsList.concat([userReceivingFriendRequestUsername]);
+    userSendingFriendRequest.sentRequestsList = userSendingFriendRequest.sentRequestsList.concat([userReceivingFriendRequest.username]);
+    userReceivingFriendRequest.receivedRequestsList = userReceivingFriendRequest.receivedRequestsList.concat([userSendingFriendRequest.username])
 
     await userSendingFriendRequest.save()
+    await userReceivingFriendRequest.save()
 
-    return res.status(200).json(userSendingFriendRequest);
-
+    return res.status(200).json({ userSendingFriendRequest, userReceivingFriendRequest });
   } catch (error) {
     return res.status(500).json({ message: error });
   }
-})
+});
 
 router.post("/accept-friend-request", async (req, res) => {
   const { userReceivingFriendRequestUsername, userSendingFriendRequestUsername } = req.body
+  try {
+    const userSendingFriendRequest = await Users.findOne({ where: ({ username: userSendingFriendRequestUsername }) });
 
-  const userSendingFriendRequest = await Users.findOne({ where: ({ username: userSendingFriendRequestUsername }) });
+    const userReceivingFriendRequest = await Users.findOne({ where: ({ username: userReceivingFriendRequestUsername }) });
 
-  const userReceivingFriendRequest = await Users.findOne({ where: ({ username: userReceivingFriendRequestUsername }) });
-
-  if (userReceivingFriendRequest == null || userSendingFriendRequest == null) {
-    return res.status(403).json({
-      "message": "The user receiving the friend request or the user sending the friend request does not exist"
-    })
-  }
-
-  if (userReceivingFriendRequest.friendsList.includes(userSendingFriendRequest.username) ||
-    userSendingFriendRequest.friendsList.includes(userReceivingFriendRequest.username)) {
-    return res.status(403).json({ "message": "Already Friends" })
-  }
-
-  // add user who is receiving the friend request
-  userSendingFriendRequest.friendsList = userSendingFriendRequest.friendsList.concat([userReceivingFriendRequestUsername])
-  await userSendingFriendRequest.save()
-
-  // add user who is accepting the friend request
-  userReceivingFriendRequest.friendsList = userReceivingFriendRequest.friendsList.concat([userSendingFriendRequestUsername])
-  await userReceivingFriendRequest.save()
-
-  // remove friend request because both users are already friends 
-  // you can't request someone who you're already friends with
-  const senderFriendRequests = [...userSendingFriendRequest.sentRequestsList];
-  const index = senderFriendRequests.indexOf(userReceivingFriendRequestUsername);
-
-  if (index !== -1) {
-    senderFriendRequests.splice(index, 1);
-  }
-  userSendingFriendRequest.sentRequestsList = senderFriendRequests;
-  await userSendingFriendRequest.save()
-
-  return res.status(200).json(userSendingFriendRequest)
-
-})
-
-router.post("/search-for-user", async (req, res) => {
-
-  const { query, username } = req.body
-
-  const users = await Users.findAll();
-
-  const resultOfSearch = []
-
-  for (let i = 0; i < users.length; i++) {
-    // if the query is included in a username also can't search for yourself
-    if (users[i].username.includes(query.query) && users[i].username !== username) {
-      resultOfSearch.push(users[i])
+    if (userReceivingFriendRequest == null || userSendingFriendRequest == null) {
+      return res.status(403).json({
+        "message": "The user receiving the friend request or the user sending the friend request does not exist"
+      })
     }
+
+    if (userReceivingFriendRequest.friendsList.includes(userSendingFriendRequest.username) ||
+      userSendingFriendRequest.friendsList.includes(userReceivingFriendRequest.username)) {
+      return res.status(403).json({ "message": "Already Friends" })
+    }
+
+    // add user who is receiving the friend request
+    userSendingFriendRequest.friendsList = userSendingFriendRequest.friendsList.concat([userReceivingFriendRequestUsername])
+    await userSendingFriendRequest.save()
+
+    // add user who is accepting the friend request
+    userReceivingFriendRequest.friendsList = userReceivingFriendRequest.friendsList.concat([userSendingFriendRequestUsername])
+    await userReceivingFriendRequest.save()
+
+    // remove friend request because both users are already friends 
+    // you can't request someone who you're already friends with
+    const senderFriendRequests = [...userSendingFriendRequest.sentRequestsList];
+    const indexOfSender = senderFriendRequests.indexOf(userReceivingFriendRequestUsername);
+
+    if (indexOfSender !== -1) {
+      senderFriendRequests.splice(indexOfSender, 1);
+    }
+    userSendingFriendRequest.sentRequestsList = senderFriendRequests;
+    await userSendingFriendRequest.save()
+
+
+    // the user receiving the friend request also has the user sending the friend request in
+    // their receivedRequestList
+    const receivingReceivedRequestList = [...userReceivingFriendRequest.receivedRequestsList];
+    const indexOfReceieved = receivingReceivedRequestList.indexOf(userSendingFriendRequestUsername);
+
+    if (indexOfReceieved !== -1) {
+      receivingReceivedRequestList.splice(indexOfReceieved, 1);
+    }
+    userReceivingFriendRequest.receivedRequestsList = receivingReceivedRequestList;
+    await userReceivingFriendRequest.save()
+
+    return res.status(200).json({ userSendingFriendRequest, userReceivingFriendRequest })
+  } catch (error) {
+    return res.status(500).json({ "message": error })
   }
-  return res.status(200).json(resultOfSearch)
 })
 
 
