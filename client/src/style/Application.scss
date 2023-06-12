@@ -1,7 +1,10 @@
-// tailwind imports
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+// for html and body in public/index.html
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
 
-// account styling
-@import '../features//auth/style/_account.scss'
+@import '../features/auth/style/_account.scss';
+
+@import '../features/header/style/_header.scss';
