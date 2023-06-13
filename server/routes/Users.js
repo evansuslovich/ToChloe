@@ -197,7 +197,7 @@ router.post("/search-for-user", async (req, res) => {
 
   for (let i = 0; i < users.length; i++) {
     // if the query is included in a username also can't search for yourself
-    if (users[i].username.includes(query.query) && users[i].username !== username) {
+    if (users[i].username.toLowerCase().includes(query.query.toLowerCase()) && users[i].username !== username) {
       resultOfSearch.push(users[i])
     }
   }
