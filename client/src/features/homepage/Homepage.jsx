@@ -24,10 +24,7 @@ export default function Homepage() {
       {
         auth &&
         <div>
-          <Link to="/account"> Account </Link>
-
           <Search />
-
           <br />
 
           <Link onClick={async () => {
