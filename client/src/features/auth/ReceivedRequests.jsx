@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react"
+import { useState, useEffect } from "react"
 import { useSelector } from "react-redux"
 import { selectCurrentUser } from "../../app/services/slices/authSlice"
 import { useAcceptFriendRequestMutation } from "../../app/services/api/authApi"
@@ -16,7 +16,6 @@ export default function ReceivedRequests() {
     const listOfRequests = user.receivedRequestsList.map((friend) => (
       <ul key={friend}>
         <li key={friend}>
-
           {friend} requests you
           <Button
             variant="contained"
@@ -36,14 +35,22 @@ export default function ReceivedRequests() {
       </ul >
     ))
     setRequests(listOfRequests)
-  }, [user])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user.receivedRequestsList])
 
   return (
     <div>
-      {requests.length !== 0 && (
-        { requests }
-      )}
-      <h1>No pending requests</h1>
-    </div >
+      {
+        requests.length > 0 && (
+          <div>
+            {requests.map((request) => (
+              <div key={request.id}>
+                <p>{request}</p>
+              </div>
+            ))}
+          </div>
+        )
+      }
+    </div>
   )
 }
