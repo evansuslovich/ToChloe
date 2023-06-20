@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react"
+import { useEffect, useState } from "react"
 import { NavLink } from 'react-router-dom';
 
 export default function SearchedUsers(listOfUsers) {
@@ -9,7 +9,7 @@ export default function SearchedUsers(listOfUsers) {
     const usersInformation = listOfUsers.map((user) => (
       <ul key={user.username}>
         <li key={user.username}>
-          <NavLink to={"/account/" + user.username}>{user.username}</NavLink>
+          <NavLink to={"/" + user.username}>{user.username}</NavLink>
         </li>
       </ul >
     ))

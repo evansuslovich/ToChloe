@@ -1,10 +1,12 @@
-import React from "react"
-import Header from "../../header/Header"
+import Header from "../header/Header";
 
-export default function Intro() {
+export default function Homepage() {
 
   return (
-    <Header />
 
+    <div>
+      <Header />
+
+    </div >
   )
 }

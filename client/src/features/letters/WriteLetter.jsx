@@ -1,11 +1,10 @@
-import React, { useState } from "react"
+import React from "react"
 import { useCreateLetterMutation } from "../../app/services/api/letterApi";
 import { useSnackbar } from 'notistack'
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import { useSelector } from "react-redux"
 import { selectCurrentUser } from "../../app/services/slices/authSlice"
-
 
 
 export default function WriteLetter() {
@@ -21,8 +20,6 @@ export default function WriteLetter() {
     const value = event.target.value;
     setLetterCredentials(values => ({ ...values, [name]: value }))
   }
-
-  console.log(letterCredentials)
 
   return (
     <div>
@@ -53,7 +50,7 @@ export default function WriteLetter() {
         disabled={isLoading}
         onClick={async () => {
           try {
-            const sentLetter = await createLetter(letterCredentials).unwrap();
+            await createLetter(letterCredentials).unwrap();
             enqueueSnackbar('Letter Created', { variant: 'success' });
           } catch (err) {
             console.log(err)
