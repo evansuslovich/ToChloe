@@ -1,22 +1,27 @@
+import React from "react"
 import { useSelector } from "react-redux"
 import { selectCurrentUser } from "../../app/services/slices/authSlice"
 import { NavLink } from "react-router-dom"
+import AccountInfoBar from "./AccountInfoBar"
+
+import dayjs from "dayjs"
 
 export default function Account() {
 
   const user = useSelector(selectCurrentUser)
 
   return (
-    <div>
+    <div className="account">
+
+      <AccountInfoBar />
+
       <div>
-        <h1>Account</h1>
-        <h1>First Name: {user.firstName}</h1>
-        <h1>Last Name: {user.lastName}</h1>
-        <h1>username: {user.username}</h1>
-        <NavLink to="/account/friends">Friends: {user.friendsList.length}</NavLink>
-        <br />
-        <NavLink to="/account/acceptRequests">Accept Friend Requests</NavLink>
+        <h1>My Penpals</h1>
       </div>
-    </div>
+
+      <div>
+        <h1>My connections</h1>
+      </div>
+    </div >
   )
 }
