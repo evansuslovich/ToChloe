@@ -1,0 +1,33 @@
+.intro {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: auto auto;
+}
+
+
+.box {
+  width: 400px;
+  background-color: #f0e9dd;
+  height: 325px;
+  text-align: center;
+  outline-style: inset;
+  margin: 20px;
+
+  h1 {
+    font-size: 20px;
+  }
+
+  img {
+      width: 327px;
+  }
+
+  .email {
+    margin-top: -10px;
+    width: 280px;
+  }
+}

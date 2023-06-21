@@ -1,4 +1,5 @@
 import Header from "../header/Header";
+import Intro from "./Intro";
 
 export default function Homepage() {
 
@@ -6,7 +7,7 @@ export default function Homepage() {
 
     <div>
       <Header />
-
+      <Intro />
     </div >
   )
 }

@@ -3,18 +3,25 @@
   align-items: center;
   justify-content: space-between;
   padding: 16px;
-  background-color: #e6d2b5;
+  background-color: #000000;
+  outline-style: inset;
+
 
   .logo {
     font-size: 30px;
     text-decoration: none;
     font-size: 52px;
-    color: #000000;
+    color: #e6d2b5;
   }
 
   .account-logo {
+    background-color: #e6d2b5;
     display: flex;
     align-items: center;
+    height: 35px;
+    width: 35px;
+    justify-content: center;
+    border-radius: 50%;
   }
 }
 

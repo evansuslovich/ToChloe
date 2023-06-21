@@ -1,6 +1,4 @@
-import { NavLink, useNavigate } from "react-router-dom"
-import PersonIcon from '@mui/icons-material/Person';
-import IconButton from "@mui/material/IconButton";
+import { NavLink } from "react-router-dom"
 import UserMenu from "./UserMenu";
 
 export default function Header() {
