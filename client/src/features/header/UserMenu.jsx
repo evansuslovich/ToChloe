@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import IconButton from '@mui/material/IconButton';
 import PersonIcon from '@mui/icons-material/Person';
+import LoginIcon from '@mui/icons-material/Login';
 import Menu from '@mui/material/Menu';
 import Button from '@mui/material/Button';
 import MenuItem from '@mui/material/MenuItem';
@@ -62,7 +63,7 @@ const UserMenu = () => {
     );
   } else {
     content = (
-      <Button
+      <IconButton
         component={Link}
         to="/sign-in"
         sx={{
@@ -70,8 +71,8 @@ const UserMenu = () => {
           color: "contrast"
         }}
       >
-        Login
-      </Button>
+        <LoginIcon />
+      </IconButton>
     );
   }
 
