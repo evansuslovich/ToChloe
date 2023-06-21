@@ -10,27 +10,21 @@ export default function Account() {
   const user = useSelector(selectCurrentUser)
 
   return (
-    <div className="navBar">
+    <div className="header">
+      <h1 className="logo">
+        {user.firstName} {' '} {user.lastName}
+      </h1>
+      <h1 className="logo">
+        {user.friendsList.length} penpallers
+      </h1>
+      <h1 className="logo">
+        Member since {dayjs(user.createdAt).format("MM/DD/YYYY")}
+      </h1>
 
-      <ul>
-        <li>
-          {user.firstName} {' '} {user.lastName}
-        </li>
-        <li>
-          {user.username}
-        </li>
 
-        <li>
-          {user.friendsList.length} penpallers
-        </li>
-
-        <li>
-          Member since {dayjs(user.createdAt).format("MM/DD/YYYY")}
-        </li>
-      </ul>
-      <NavLink to="/account/friends">Friends: {user.friendsList.length}</NavLink>
+      {/* <NavLink to="/account/friends">Friends: {user.friendsList.length}</NavLink>
       <br />
-      <NavLink to="/account/acceptRequests">Accept Friend Requests</NavLink>
+      <NavLink to="/account/acceptRequests">Accept Friend Requests</NavLink> */}
 
 
     </div >
